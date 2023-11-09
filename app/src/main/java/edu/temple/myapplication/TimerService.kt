@@ -3,6 +3,7 @@ package edu.temple.myapplication
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 
@@ -14,6 +15,8 @@ class TimerService : Service() {
     lateinit var t: TimerThread
 
     private var paused = false
+
+    lateinit var timerHandler: Handler
 
     inner class TimerBinder : Binder() {
 
@@ -45,6 +48,9 @@ class TimerService : Service() {
         // Pause a running timer
         fun pause() {
             this@TimerService.pause()
+        }
+        fun setHandler(handler: Handler){
+            timerHandler = handler
         }
 
     }
@@ -79,6 +85,10 @@ class TimerService : Service() {
                 for (i in startValue downTo 1)  {
                     Log.d("Countdown", i.toString())
 
+
+                    if(::timerHandler.isInitialized){
+                        timerHandler.sendEmptyMessage(i)
+                    }
                         while (paused);
                         sleep(1000)
 
